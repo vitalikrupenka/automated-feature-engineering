@@ -1,6 +1,6 @@
 import pandas as pd 
 
-loans = pd.read_csv('data/loans.csv')
+loans = pd.read_csv('data/loans.csv', low_memory=False)
 clients = pd.read_csv('data/clients.csv', low_memory=False)
 
 # Group loans by client id and calculate mean, max, min of loans
@@ -10,4 +10,4 @@ stats.columns = ['mean_loan_amount', 'max_loan_amount', 'min_loan_amount']
 # Merge with the clients dataframe
 stats = clients.merge(stats, left_on = 'client_id', right_index=True, how = 'left')
 
-stats.head(10)
+print(stats.head(10))
