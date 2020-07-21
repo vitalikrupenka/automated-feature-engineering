@@ -16,25 +16,29 @@ es = es.entity_from_dataframe(entity_id='looks', dataframe=looks,
                                 index='look_id')
 
 es = es.entity_from_dataframe(entity_id='likes', dataframe=likes,
-                                variable_types={'missed' : ft.variable_types.Discrete},
                                 make_index=True, index='like_id')
 
 r_user_likes = ft.Relationship(es['users']['user_id'], es['likes']['user_id'])
 r_look_likes = ft.Relationship(es['looks']['look_id'], es['likes']['look_id'])
 
-es.add_relationship(r_client_loans)
-es.add_relationship(r_loan_payments)
+es.add_relationship(r_user_likes)
+es.add_relationship(r_look_likes)
 
-print('', es, es['users'], es['looks'], es['likes'], '', sep=my_sep)
+# print('', es, es['users'], es['looks'], es['likes'], '', sep=my_sep)
 
-# features, feature_names = ft.dfs(entityset=es, target_entity='clients',
-#                                     agg_primitives=['mean', 'max', 'percent_true', 'last'],
-#                                     trans_primitives=['month', 'year'])
-
+# features, feature_names = ft.dfs(entityset=es, target_entity='likes',
+#                                     agg_primitives=['sum'])
 # print('', features, feature_names, '', sep=my_sep)
 
-# df = pd.DataFrame(features)
-# df.to_csv (r'data/features.csv', index = True, header=True)
+# Group loans by client id and calculate mean, max, min of loans
+stats = likes.groupby('user_id')['look_liked'].agg(['sum'])
+stats.columns = ['num_looks_liked']
 
-# print(stats.head(50))
+# Merge with the clients dataframe
+stats = users.merge(stats, left_on = 'user_id', right_index=True, how='left')
+stats = stats.sort_values(by=['num_looks_liked', 'l_name'], ascending=[False, True])
 
+print(stats.head(50))
+
+df = pd.DataFrame(stats)
+df.to_csv (r'data/lg_features.csv', index = False, header=True)
