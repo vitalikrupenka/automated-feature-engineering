@@ -31,12 +31,13 @@ es.add_relationship(r_look_likes)
 # print('', features, feature_names, '', sep=my_sep)
 
 # Group loans by client id and calculate mean, max, min of loans
+
 stats = likes.groupby('user_id')['look_liked'].agg(['sum'])
 stats.columns = ['num_looks_liked']
 
 # Merge with the clients dataframe
 stats = users.merge(stats, left_on = 'user_id', right_index=True, how='left')
-stats = stats.sort_values(by=['num_looks_liked', 'l_name'], ascending=[False, True])
+stats = stats.sort_values(by=['num_looks_liked', 'person_last_name'], ascending=[False, True])
 
 print(stats.head(50))
 
