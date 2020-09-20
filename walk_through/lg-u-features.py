@@ -12,8 +12,8 @@ print(u_features.shape, end='\n\n')
 # ufc = u_features.columns.values
 # drop_ids = [x for x in ufc if 'look_id_' in x]
 
-X = u_features.drop(['look_id_2'], axis=1)
-Y = u_features['look_id_2']
+X = u_features.drop(['look_id_1'], axis=1)
+Y = u_features['look_id_150']
 
 from sklearn.model_selection import train_test_split
 
@@ -80,4 +80,18 @@ fpr, tpr, _ = metrics.roc_curve(y_test,  y_pred_proba)
 auc = metrics.roc_auc_score(y_test, y_pred_proba)
 plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
 plt.legend(loc=4)
+plt.show()
+
+from sklearn.metrics import precision_recall_curve
+precision, recall, thresholds = precision_recall_curve(y_test, y_pred_proba) 
+   #retrieve probability of being 1(in second column of probs_y)
+pr_auc = metrics.auc(recall, precision)
+
+plt.title("Precision-Recall vs Threshold Chart")
+plt.plot(thresholds, precision[: -1], "b--", label="Precision")
+plt.plot(thresholds, recall[: -1], "r--", label="Recall")
+plt.ylabel("Precision, Recall")
+plt.xlabel("Threshold")
+plt.legend(loc="lower left")
+plt.ylim([0,1])
 plt.show()
