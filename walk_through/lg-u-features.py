@@ -8,16 +8,12 @@ import numpy as np
 u_features = pd.read_csv('data/lg_feature_united.csv')
 
 print(u_features.shape, end='\n\n')
-# u_features.drop(['look_liked'], axis='columns', inplace=True)
-# print(u_features.shape, end='\n\n')
 
-ufc = u_features.columns
-drop_ids = [x for x in ufc if 'look_id_' in ufc]
+# ufc = u_features.columns.values
+# drop_ids = [x for x in ufc if 'look_id_' in x]
 
-print(len(drop_ids))
-
-X = u_features.drop(['look_id_1'], axis=1)
-Y = u_features['look_id_1']
+X = u_features.drop(['look_id_2'], axis=1)
+Y = u_features['look_id_2']
 
 from sklearn.model_selection import train_test_split
 
@@ -51,43 +47,37 @@ print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
 print("Precision:",metrics.precision_score(y_test, y_pred))
 print("Recall:",metrics.recall_score(y_test, y_pred))
 
-fig, ax = plt.subplots(figsize=(12, 8))
+# fig, ax = plt.subplots(figsize=(12, 8))
+# plt.scatter(y_test, y_pred)
+# plt.show()
 
-plt.scatter(y_test, y_pred)
-plt.show()
+# df_pred_actual_sample = df_pred_actual.sample(5)
+# df_pred_actual_sample = df_pred_actual_sample.reset_index()
 
-df_pred_actual_sample = df_pred_actual.sample(5)
-df_pred_actual_sample = df_pred_actual_sample.reset_index()
+# plt.figure(figsize = (20, 10))
+# plt.plot(df_pred_actual_sample['predicted'], label='Predicted')
+# plt.plot(df_pred_actual_sample['actual'], label='Actual')
+# plt.ylabel('Age')
+# plt.legend()
+# plt.show()
 
-plt.figure(figsize = (20, 10))
-
-plt.plot(df_pred_actual_sample['predicted'], label='Predicted')
-plt.plot(df_pred_actual_sample['actual'], label='Actual')
-
-plt.ylabel('Age')
-
-plt.legend()
-plt.show()
-
-class_names=[0,1] # name  of classes
-fig, ax = plt.subplots()
-tick_marks = np.arange(len(class_names))
-plt.xticks(tick_marks, class_names)
-plt.yticks(tick_marks, class_names)
-# create heatmap
-sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu" ,fmt='g')
-ax.xaxis.set_label_position("top")
-plt.tight_layout()
-plt.title('Confusion matrix', y=1.1)
-plt.ylabel('Actual label')
-plt.xlabel('Predicted label')
-
-plt.show()
+# class_names=[0,1] # name  of classes
+# fig, ax = plt.subplots()
+# tick_marks = np.arange(len(class_names))
+# plt.xticks(tick_marks, class_names)
+# plt.yticks(tick_marks, class_names)
+# # create heatmap
+# sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu" ,fmt='g')
+# ax.xaxis.set_label_position("top")
+# plt.tight_layout()
+# plt.title('Confusion matrix', y=1.1)
+# plt.ylabel('Actual label')
+# plt.xlabel('Predicted label')
+# plt.show()
 
 y_pred_proba = lrm.predict_proba(x_test)[::,1]
 fpr, tpr, _ = metrics.roc_curve(y_test,  y_pred_proba)
 auc = metrics.roc_auc_score(y_test, y_pred_proba)
 plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
 plt.legend(loc=4)
-
 plt.show()
