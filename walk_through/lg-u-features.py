@@ -11,8 +11,10 @@ print(u_features.shape, end='\n\n')
 # u_features.drop(['look_liked'], axis='columns', inplace=True)
 # print(u_features.shape, end='\n\n')
 
-print(u_features.columns[0])
-# drop_ids = [x for x in u_features.columns]
+ufc = u_features.columns
+drop_ids = [x for x in ufc if 'look_id_' in ufc]
+
+print(len(drop_ids))
 
 X = u_features.drop(['look_id_1'], axis=1)
 Y = u_features['look_id_1']
