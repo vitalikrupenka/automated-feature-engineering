@@ -5,15 +5,23 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np 
 
-u_features = pd.read_csv('data/lg_feature_united.csv')
+u_features = pd.read_csv('data/lg_features_real.csv')
 
 print(u_features.shape, end='\n\n')
 
 # ufc = u_features.columns.values
 # drop_ids = [x for x in ufc if 'look_id_' in x]
 
-X = u_features.drop(['look_id_1'], axis=1)
-Y = u_features['look_id_150']
+u_features = u_features.drop(['user_id'], axis=1)
+
+X = u_features.drop(['style_business_casual'], axis=1)
+Y = u_features['style_business_casual']
+
+# X = u_features.drop(['size_m'], axis=1)
+# Y = u_features['size_m']
+
+# X = u_features.drop(['color_white'], axis=1)
+# Y = u_features['color_white']
 
 from sklearn.model_selection import train_test_split
 
@@ -34,18 +42,38 @@ predictors = x_train.columns
 # print(coef, end='\n\n')
 
 y_pred = lrm.predict(x_test)
-
 df_pred_actual = pd.DataFrame({'predicted': y_pred, 'actual': y_test})
 print(df_pred_actual.head(10), end='\n\n')
 
-# from sklearn.metrics import r2_score
 from sklearn import metrics
-cnf_matrix = metrics.confusion_matrix(y_test, y_pred)
-print('Testing score: ', cnf_matrix, end='\n\n')
+# cnf_matrix = metrics.confusion_matrix(y_test, y_pred)
+# print('Testing score: ', cnf_matrix, end='\n\n')
 
-print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
-print("Precision:",metrics.precision_score(y_test, y_pred))
-print("Recall:",metrics.recall_score(y_test, y_pred))
+print("Accuracy: {:.2f} %".format(100 * metrics.accuracy_score(y_test, y_pred)))
+print("Precision: {:.2f} %".format(100 * metrics.precision_score(y_test, y_pred)))
+print("Recall:  {:.2f} %".format(100 * metrics.recall_score(y_test, y_pred)))
+
+#Visualizations
+y_pred_proba = lrm.predict_proba(x_test)[::,1]
+fpr, tpr, _ = metrics.roc_curve(y_test,  y_pred_proba)
+auc = metrics.roc_auc_score(y_test, y_pred_proba)
+plt.plot(100 * fpr, 100 * tpr, label="data 1, auc={:.2f} %".format(100 * auc))
+# plt.plot(100 * fpr, 100 * tpr, label="data 1, auc=" + str(100 * auc))
+plt.legend(loc=4)
+plt.show()
+
+from sklearn.metrics import precision_recall_curve
+precision, recall, thresholds = precision_recall_curve(y_test, y_pred_proba) 
+pr_auc = metrics.auc(recall, precision)
+
+plt.title("Precision-Recall vs Threshold Chart")
+plt.plot(100 * thresholds, 100 * precision[: -1], "b--", label="Precision, %")
+plt.plot(100 * thresholds, 100 * recall[: -1], "r--", label="Recall, %")
+plt.ylabel("Precision / Recall, %")
+plt.xlabel("Threshold, %")
+plt.legend(loc="lower left")
+plt.ylim([0,100])
+plt.show()
 
 # fig, ax = plt.subplots(figsize=(12, 8))
 # plt.scatter(y_test, y_pred)
@@ -74,24 +102,3 @@ print("Recall:",metrics.recall_score(y_test, y_pred))
 # plt.ylabel('Actual label')
 # plt.xlabel('Predicted label')
 # plt.show()
-
-y_pred_proba = lrm.predict_proba(x_test)[::,1]
-fpr, tpr, _ = metrics.roc_curve(y_test,  y_pred_proba)
-auc = metrics.roc_auc_score(y_test, y_pred_proba)
-plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
-plt.legend(loc=4)
-plt.show()
-
-from sklearn.metrics import precision_recall_curve
-precision, recall, thresholds = precision_recall_curve(y_test, y_pred_proba) 
-   #retrieve probability of being 1(in second column of probs_y)
-pr_auc = metrics.auc(recall, precision)
-
-plt.title("Precision-Recall vs Threshold Chart")
-plt.plot(thresholds, precision[: -1], "b--", label="Precision")
-plt.plot(thresholds, recall[: -1], "r--", label="Recall")
-plt.ylabel("Precision, Recall")
-plt.xlabel("Threshold")
-plt.legend(loc="lower left")
-plt.ylim([0,1])
-plt.show()
