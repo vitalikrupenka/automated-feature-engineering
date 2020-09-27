@@ -6,34 +6,25 @@ import seaborn as sns
 import numpy as np 
 
 u_features = pd.read_csv('data/lg_features_real.csv')
+u_likes_p = pd.read_csv('data/lg_likes_real-pred.csv')
+
+u_features = u_features.merge(u_likes_p, left_on='user_id', right_on='user_id')
+u_features.to_csv('lg_features_real-pred.csv', index=False)
 
 print(u_features.shape, end='\n\n')
-
-# ufc = u_features.columns.values
-# drop_ids = [x for x in ufc if 'look_id_' in x]
 
 u_features = u_features.drop(['user_id'], axis=1)
 
 X = u_features.drop(['style_business_casual'], axis=1)
 Y = u_features['style_business_casual']
 
-# X = u_features.drop(['size_m'], axis=1)
-# Y = u_features['size_m']
-
-# X = u_features.drop(['color_white'], axis=1)
-# Y = u_features['color_white']
-
 from sklearn.model_selection import train_test_split
-
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
-
 print(x_train.shape, x_test.shape, end='\n\n')
 print(y_train.shape, y_test.shape, end='\n\n')
 
 from sklearn.linear_model import LogisticRegression
-
 lrm = LogisticRegression().fit(x_train, y_train)
-
 print('Training score: ', lrm.score(x_train, y_train), end='\n\n')
 
 predictors = x_train.columns
