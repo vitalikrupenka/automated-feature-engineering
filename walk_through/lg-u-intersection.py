@@ -47,7 +47,7 @@ for item in isr:
 import matplotlib.image as img 
 import matplotlib.pyplot as plt 
 
-user_id = 105
+user_id = 32
 
 look_img = img.imread('data/looks/%d.png' % (ism[user_id][0]))
 plt.imshow(look_img)
@@ -80,7 +80,7 @@ u_likes.to_csv('data/lg_likes_real-pred.csv', index=False)
 u_features_rp = pd.read_csv('data/lg_features_real-pred.csv')
 ufrp_corr = u_features_rp.corr()
 
-import seaborn as sns
-fig, ax = plt.subplots(figsize=(24, 20))
-sns.heatmap(ufrp_corr, annot=False)
-plt.show()
+# import seaborn as sns
+# fig, ax = plt.subplots(figsize=(24, 20))
+# sns.heatmap(ufrp_corr, annot=False)
+# plt.show()
